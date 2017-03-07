@@ -1,0 +1,40 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+version = 0.1
+
+jar {
+    manifest {
+        attributes 'Main-Class' : 'com.beardflex.ui.DevToolsApplication'
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'main'
+        }
+        resources {
+            srcDir 'main'
+        }
+    }
+    test {
+        java {
+            srcDir 'test'
+        }
+        resources {
+            srcDir 'test'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    
+    testCompile 'junit:junit:4.12'
+}
