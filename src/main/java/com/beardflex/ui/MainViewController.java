@@ -1,13 +1,16 @@
 package com.beardflex.ui;
 
+import com.beardflex.bean.*;
+import com.beardflex.ui.cell.EffortTypeTreeCell;
+import com.beardflex.ui.detail.DetailViewController;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,44 +22,84 @@ import java.util.ResourceBundle;
  */
 public class MainViewController implements Initializable {
 
-    @FXML private TreeView<String> projectTree;
+    @FXML private TreeView<Effort> effortTree;
     @FXML private MenuBar menuBar;
-    @FXML private ListView effortList;
+    @FXML private TabPane tabPane;
+    @FXML private VBox detailView;
+
+    @FXML private Button saveButton;
+    @FXML private Button editButton;
+    @FXML private Button cancelButton;
+
+    private TreeItem<Effort> root;
+
+    private ResourceBundle bundle;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        if(projectTree != null) {
+        this.bundle = resources;
+        String title = bundle.getString("title");
+
+        if(effortTree != null) {
             populateTree();
         } else {
             throw new NotImplementedException();
         }
+
     }
 
     public void populateTree() {
-        List<String> projects = Arrays.<String>asList(
-                "PANCloudDirector :: 3.1 :: Meteor",
-                "PANCloudDirector :: 3.2 :: Nano",
-                "PANCloudDirector :: 3.3 :: Ovary",
-                "PCDTools :: 3.1 :: Meteor"
-        );
 
-        List<String> efforts = Arrays.<String>asList(
-                "[BUG    ] 41686 :: DNS should not be updated.",
-                "[FEATURE] 51678 :: Add cancer curing."
-        );
 
-        TreeItem root = new TreeItem<String>("Projects");
-        projectTree.setRoot(root);
+        effortTree.setCellFactory( cellFactory -> {
+            final EffortTypeTreeCell cell = new EffortTypeTreeCell();
 
-        for (String project : projects ) {
-            TreeItem<String> rootNode = new TreeItem<String>(project);
-            for (String child: efforts ) {
-                TreeItem childNode = new TreeItem<String>(child);
-                rootNode.getChildren().add(childNode);
-            }
-            root.getChildren().add(rootNode);
+            ContextMenu contextMenu = new ContextMenu();
+
+            return cell;
+        });
+        Project rootNode = new Project();
+        root = new TreeItem<Effort>(rootNode);
+        effortTree.setRoot(root);
+
+        List<Project> projects = getProjects();
+
+        for (Project p: projects) {
+            addToTree(root, p);
         }
 
+        // Expand the top level tree item.
+        root.setExpanded(true);
+
+    }
+
+    private void addToTree(TreeItem<Effort> parent, Effort effort) {
+        TreeItem<Effort> __thisNode = new TreeItem<Effort>(effort);
+        if(effort.getChildren().size() > 0) {
+            for (Effort childEffort: effort.getChildren()) {
+                addToTree(__thisNode, childEffort);
+            }
+        }
+        parent.getChildren().add(__thisNode);
+    }
+
+    public List<Project> getProjects() {
+        Version version = new Version(3,1,0);
+        Project pcd31 = new Project("PANCloudDirector", "Meteor", version);
+
+        Bug bug41686 = new Bug();
+        bug41686.setName("[POV 1719754] PCDTools expects that all servers have a primary and secondary DNS server configured and fails in the case of only the Primary DNS being set");
+        bug41686.setIssueNumber("41686");
+
+        pcd31.getChildren().add(bug41686);
+
+        Feature feature = new Feature();
+        feature.setName("Partner Uplift for Customer Servers");
+        feature.setIssueNumber("41273");
+
+        pcd31.getChildren().add(feature);
+
+        return Arrays.asList(pcd31);
     }
 
     public void populateList() {

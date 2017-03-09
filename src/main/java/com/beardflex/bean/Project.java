@@ -5,35 +5,33 @@ import java.io.Serializable;
 /**
  * Created by David on 07/03/2017.
  */
-public class Project implements Serializable {
+public class Project extends Effort {
+    private Version version;
+    private String codeName;
 
-    private static final long serialVersionUID = 1l;
-
-    private long id;
-    private String name;
-    private String version;
-
-    public long getId() {
-        return id;
+    public Project() {
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public Project(String name, String codeName, Version version) {
+        setName(name);
+        setType(EffortType.Project);
+        setCodeName(codeName);
+        setVersion(version);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getVersion() {
+    public Version getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(Version version) {
         this.version = version;
+    }
+
+    public String getCodeName() {
+        return codeName;
+    }
+
+    public void setCodeName(String codeName) {
+        this.codeName = codeName;
     }
 }

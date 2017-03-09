@@ -1,0 +1,7 @@
+.dev-tools-container {
+    -fx-padding: 10px;
+}
+
+.dev-tools-button-bar {
+    -fx-padding: 0px 5px;
+}
