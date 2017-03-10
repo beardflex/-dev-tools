@@ -8,7 +8,7 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane prefHeight="638.0" prefWidth="1023.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="638.0" prefWidth="1023.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:id="borderPane">
    <top>
       <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
         <menus>
@@ -31,16 +31,6 @@
       </MenuBar>
    </top>
    <left>
-      <TreeView fx:id="effortTree" prefHeight="375.0" prefWidth="311.0" BorderPane.alignment="TOP_LEFT" />
+      <TreeView fx:id="effortTree" prefHeight="375.0" prefWidth="400.0" BorderPane.alignment="TOP_LEFT" />
    </left>
-
-   <bottom>
-      <ButtonBar fx:id="buttonBar" prefHeight="40.0" prefWidth="200.0" styleClass="dev-tools-button-bar" BorderPane.alignment="CENTER">
-        <buttons>
-          <Button fx:id="saveButton" mnemonicParsing="false" text="Save" />
-            <Button fx:id="editButton" mnemonicParsing="false" text="Edit" />
-            <Button fx:id="cancelButton" mnemonicParsing="false" text="Cancel" />
-        </buttons>
-      </ButtonBar>
-   </bottom>
 </BorderPane>

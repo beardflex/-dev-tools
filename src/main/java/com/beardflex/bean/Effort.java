@@ -1,6 +1,7 @@
 package com.beardflex.bean;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +15,11 @@ public class Effort implements Serializable {
     private String name;
     private EffortType type;
 
-    private LocalDateTime startDate;
-    private LocalDateTime dueDate;
-    private LocalDateTime completedDate;
+    private LocalDate startDate;
+    private LocalDate dueDate;
+    private LocalDate completedDate;
 
+    private Effort parent;
     private List<Effort> children;
 
     public Effort() {
@@ -40,27 +42,27 @@ public class Effort implements Serializable {
         this.type = type;
     }
 
-    public LocalDateTime getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDateTime startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDateTime getDueDate() {
+    public LocalDate getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(LocalDateTime dueDate) {
+    public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
 
-    public LocalDateTime getCompletedDate() {
+    public LocalDate getCompletedDate() {
         return completedDate;
     }
 
-    public void setCompletedDate(LocalDateTime completedDate) {
+    public void setCompletedDate(LocalDate completedDate) {
         this.completedDate = completedDate;
     }
 
@@ -70,5 +72,13 @@ public class Effort implements Serializable {
 
     public void setChildren(List<Effort> children) {
         this.children = children;
+    }
+
+    public Effort getParent() {
+        return parent;
+    }
+
+    public void setParent(Effort parent) {
+        this.parent = parent;
     }
 }

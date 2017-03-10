@@ -1,7 +1,7 @@
 package com.beardflex.ui.detail;
 
-import com.beardflex.bean.Effort;
-import com.beardflex.bean.EffortType;
+import com.beardflex.bean.*;
+import com.beardflex.event.Intent;
 import com.beardflex.ui.Mode;
 import com.beardflex.ui.cell.EffortTypeListCell;
 import javafx.collections.FXCollections;
@@ -35,49 +35,137 @@ public class DetailViewController implements Initializable {
     @FXML private DatePicker startDatePicker;
     @FXML private DatePicker completedDatePicker;
 
+    @FXML private Button saveButton;
+    @FXML private Button cancelButton;
+
     private Effort bean;
-    private Mode mode;
+    private Intent intent;
 
 
     public DetailViewController() {
 
     }
 
-    public DetailViewController(Effort bean, Mode mode) {
+    public DetailViewController(Effort bean, Intent intent) {
         this.bean = bean;
-        this.mode = mode;
+        this.intent = intent;
     }
 
     @Override
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
-        if(bean == null) {
-            System.out.println("Bean is null");
-        }
-
         if(typeComboBox != null) {
             populateTypes();
         }
 
-        if(bean != null) {
-            nameField.setText(bean.getName());
-
-            typeComboBox.getSelectionModel().select(bean.getType());
+        if(bean != null && intent != Intent.Create) {
+            loadFromBean();
         }
 
-        if(mode == Mode.View) {
-            typeComboBox.setEditable(false);
-            typeComboBox.setDisable(true);
-            nameField.setEditable(false);
-            dueDatePicker.setEditable(false);
-            startDatePicker.setEditable(false);
-            completedDatePicker.setEditable(false);
+        switch(intent) {
+            case Create:
+                // Disable all fields until the type is chosen.
+                nameField.setDisable(true);
+                dueDatePicker.setDisable(true);
+                startDatePicker.setDisable(true);
+                completedDatePicker.setDisable(true);
+                // Now add a listener onto the type combobox.
+                typeComboBox.setOnAction( e -> {
+                    EffortType type = typeComboBox.getSelectionModel().getSelectedItem();
+                    if(type != null) {
+                        switch(type) {
+                            case Project:
+                                // Check if the parent is null, if not, throw a message dialog up.
+                                if(bean.getParent() != null) {
+                                    // Dialog
+                                    return;
+                                }
+                                Project project = new Project();
+                                project.setParent(bean);
+                                bean = project;
+                                break;
+                            case Feature:
+                                // If no parent has been selected, it can't be assigned to a Project, so throw an error.
+                                if(bean.getParent() == null) {
+                                    // Dialog
+                                    return;
+                                }
+                                if(bean.getParent().getType() != EffortType.Project) {
+                                    // Dialog
+                                    return;
+                                }
+                                Feature feature = new Feature();
+                                feature.setParent(bean);
+                                bean = feature;
+                                break;
+                            case Bug:
+                                if(bean.getParent() == null) {
+                                    // Dialog
+                                    return;
+                                }
+                                if(bean.getParent().getType() == EffortType.ActionItem) {
+                                    // Dialog
+                                    return;
+                                }
+                                Bug bug = new Bug();
+                                bug.setParent(bean);
+                                bean = bug;
+                                break;
+                            case ActionItem:
+                                if(bean.getParent() == null) {
+                                    // Dialog
+                                    return;
+                                }
+                                ActionItem actionItem = new ActionItem();
+                                actionItem.setParent(bean);
+                                bean = actionItem;
+                        }
+                    }
+                });
+
+                break;
+            case View:
+                typeComboBox.setEditable(false);
+                typeComboBox.setDisable(true);
+                nameField.setEditable(false);
+                dueDatePicker.setEditable(false);
+                startDatePicker.setEditable(false);
+                completedDatePicker.setEditable(false);
+                break;
         }
+    }
+
+    private void loadFromBean() {
+        // Set the Name field
+        nameField.setText(bean.getName());
+        // Set the Type field.
+        typeComboBox.getSelectionModel().select(bean.getType());
+        // Set the Due Date field.
+        dueDatePicker.setValue(bean.getDueDate());
+        // Set the Start Date field.
+        startDatePicker.setValue(bean.getStartDate());
+        // Set the Completed Date field.
+        completedDatePicker.setValue(bean.getCompletedDate());
+
+        populateTabPane();
     }
 
     /** */
     private void populateTabPane() {
+        switch(bean.getType()) {
+            case Project:
 
+                break;
+            case Feature:
+
+                break;
+            case Bug:
+
+                break;
+            case ActionItem:
+
+                break;
+        }
     }
 
     private void populateTypes() {
@@ -89,8 +177,34 @@ public class DetailViewController implements Initializable {
                 }
         );
 
-        ObservableList<EffortType> types = FXCollections.observableArrayList(EffortType.values());
-        typeComboBox.setItems(types);
+
+
+        if(intent == Intent.View) {
+            ObservableList<EffortType> types = FXCollections.observableArrayList(bean.getType());
+            typeComboBox.setItems(types);
+        } else if(intent == Intent.Create) {
+            ObservableList<EffortType> types;
+            switch(bean.getType()) {
+                case Project:
+                    types = FXCollections.observableArrayList(
+                            EffortType.Feature,
+                            EffortType.Bug,
+                            EffortType.ActionItem);
+                    typeComboBox.setItems(types);
+                    break;
+                case Feature:
+                    types = FXCollections.observableArrayList(
+                            EffortType.Bug,
+                            EffortType.ActionItem);
+                    typeComboBox.setItems(types);
+                    break;
+                case Bug :
+                case ActionItem:
+                    types = FXCollections.observableArrayList(
+                            EffortType.ActionItem);
+                    typeComboBox.setItems(types);
+            }
+        }
     }
 
     public Effort getBean() {

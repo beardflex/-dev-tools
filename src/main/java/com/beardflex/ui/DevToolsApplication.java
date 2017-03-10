@@ -1,6 +1,7 @@
 package com.beardflex.ui;
 
 import com.beardflex.bean.Effort;
+import com.beardflex.event.EventManager;
 import com.beardflex.ui.detail.DetailViewController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -27,6 +28,8 @@ public class DevToolsApplication extends Application {
 
     public static DevToolsApplication instance;
 
+    public Thread eventManagerThread;
+
     public static MainViewController getMainViewController() {
         return mainViewController;
     }
@@ -40,6 +43,11 @@ public class DevToolsApplication extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         instance = this;
+
+        // Start the Event Manager Thread.
+        eventManagerThread = new Thread(EventManager.get());
+        eventManagerThread.setName("/dev/tools Event Manager Thread");
+        eventManagerThread.start();
 
         assetManager = new AssetManager();
         assetManager.loadImages();
@@ -75,20 +83,6 @@ public class DevToolsApplication extends Application {
         primaryStage.setTitle(bundle.getString("title").replaceAll("\"", ""));
 
 
-    }
-
-    public void viewEffort(Effort effort) {
-
-        URL url = getClass().getResource("detail/fxml/DetailView.fxml");
-        FXMLLoader loader = new FXMLLoader(url, bundle);
-        DetailViewController controller = new DetailViewController(effort, Mode.View);
-        loader.setController(controller);
-        try {
-            VBox detailsView = loader.load();
-            root.setCenter(detailsView);
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
     }
 
     public void onExit() {

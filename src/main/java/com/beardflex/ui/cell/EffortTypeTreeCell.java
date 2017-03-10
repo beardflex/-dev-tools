@@ -1,7 +1,11 @@
 package com.beardflex.ui.cell;
 
 import com.beardflex.bean.*;
+import com.beardflex.event.DevToolsEvent;
+import com.beardflex.event.EventManager;
+import com.beardflex.event.Intent;
 import com.beardflex.ui.DevToolsApplication;
+import javafx.concurrent.Task;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
@@ -19,12 +23,29 @@ public class EffortTypeTreeCell extends TreeCell<Effort> {
         MenuItem addItem = new MenuItem();
         addItem.setText("Add");
         contextMenu.getItems().add(addItem);
+        addItem.setOnAction(e -> {
+            Task<Void> task = new Task<Void>() {
+                @Override protected Void call() throws Exception {
+                    DevToolsEvent event = new DevToolsEvent(Intent.Create, getItem());
+                    EventManager.get().fireEvent(event);
+                    return null;
+                }
+            };
+            new Thread(task).start();
+        });
 
         MenuItem viewItem = new MenuItem();
         viewItem.setText("View");
         contextMenu.getItems().add(viewItem);
         viewItem.setOnAction(e -> {
-            DevToolsApplication.instance.viewEffort(getItem());
+            Task<Void> task = new Task<Void>() {
+                @Override protected Void call() {
+                    DevToolsEvent event = new DevToolsEvent(Intent.View, getItem());
+                    EventManager.get().fireEvent(event);
+                    return null;
+                }
+            };
+            new Thread(task).start();
         });
 
         MenuItem deleteItem = new MenuItem();

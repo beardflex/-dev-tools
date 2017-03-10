@@ -1,12 +1,16 @@
 package com.beardflex.ui;
 
 import com.beardflex.bean.*;
+import com.beardflex.event.DevToolsEventListener;
+import com.beardflex.event.EventManager;
 import com.beardflex.ui.cell.EffortTypeTreeCell;
 import com.beardflex.ui.detail.DetailViewController;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -22,18 +26,17 @@ import java.util.ResourceBundle;
  */
 public class MainViewController implements Initializable {
 
+    @FXML private BorderPane borderPane;
     @FXML private TreeView<Effort> effortTree;
     @FXML private MenuBar menuBar;
     @FXML private TabPane tabPane;
     @FXML private VBox detailView;
 
-    @FXML private Button saveButton;
-    @FXML private Button editButton;
-    @FXML private Button cancelButton;
-
     private TreeItem<Effort> root;
 
     private ResourceBundle bundle;
+
+    private DevToolsEventListener eventListener;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -45,6 +48,47 @@ public class MainViewController implements Initializable {
         } else {
             throw new NotImplementedException();
         }
+
+        eventListener = event -> {
+            URL detailViewFxmlUrl = getClass().getResource("detail/fxml/DetailView.fxml");
+            switch(event.getIntent()) {
+                case Create:
+                    Runnable createEffort = () -> {
+                        if(detailViewFxmlUrl != null) {
+                            DetailViewController controller = new DetailViewController(event.getEffort(), event.getIntent());
+                            FXMLLoader loader = new FXMLLoader(detailViewFxmlUrl, bundle);
+                            loader.setController(controller);
+                            try {
+                                VBox detailView = loader.load();
+                                borderPane.setCenter(detailView);
+                            } catch(IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+                    Platform.runLater(createEffort);
+                    break;
+                case View:
+                    Runnable viewEffort = () -> {
+                        if(detailViewFxmlUrl != null) {
+                            DetailViewController controller = new DetailViewController(event.getEffort(), event.getIntent());
+                            FXMLLoader loader = new FXMLLoader(detailViewFxmlUrl, bundle);
+                            loader.setController(controller);
+                            try {
+                                VBox detailView = loader.load();
+                                borderPane.setCenter(detailView);
+                            } catch(IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    };
+                    Platform.runLater(viewEffort);
+                    break;
+            }
+        };
+
+        EventManager.get().addListener(eventListener);
 
     }
 

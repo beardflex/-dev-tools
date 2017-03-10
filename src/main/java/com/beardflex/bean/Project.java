@@ -12,6 +12,14 @@ public class Project extends Effort {
     public Project() {
     }
 
+    public Project(Effort effort) {
+        setParent(effort.getParent());
+        setName(effort.getName());
+        setDueDate(effort.getDueDate());
+        setStartDate(effort.getStartDate());
+        setCompletedDate(effort.getCompletedDate());
+    }
+
     public Project(String name, String codeName, Version version) {
         setName(name);
         setType(EffortType.Project);

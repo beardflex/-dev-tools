@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -12,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="413.0" prefWidth="600.0" spacing="10.0" styleClass="dev-tools-container" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.beardflex.ui.detail.DetailViewController">
+<VBox prefHeight="413.0" prefWidth="600.0" spacing="10.0" styleClass="dev-tools-container" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane fx:id="gridPane" prefHeight="176.0" prefWidth="600.0">
         <columnConstraints>
@@ -53,5 +55,11 @@
           </Tab>
         </tabs>
       </TabPane>
+      <ButtonBar prefHeight="40.0" prefWidth="200.0">
+        <buttons>
+          <Button fx:id="saveButton" mnemonicParsing="false" text="%save" />
+            <Button fx:id="cancelButton" mnemonicParsing="false" text="%cancel" />
+        </buttons>
+      </ButtonBar>
    </children>
 </VBox>
