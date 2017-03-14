@@ -1,38 +1,35 @@
 package com.beardflex.ui;
 
-import com.beardflex.bean.Effort;
 import com.beardflex.event.EventManager;
-import com.beardflex.ui.detail.DetailViewController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 /**
  * Created by David on 07/03/2017.
  */
 public class DevToolsApplication extends Application {
 
+    private final Logger logger = LogManager.getLogger();
+
     private static ResourceBundle bundle = ResourceBundle.getBundle("bundles.Strings");
     public static AssetManager assetManager;
-    private static MainViewController mainViewController;
     private BorderPane root;
 
-    public static DevToolsApplication instance;
+    private Thread eventManagerThread;
+    private Background background = Background.get();
 
-    public Thread eventManagerThread;
-
-    public static MainViewController getMainViewController() {
-        return mainViewController;
-    }
 
     /**
      * JavaFX entry point. Sets up the stage and adds the UI items to the view.
@@ -42,7 +39,7 @@ public class DevToolsApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        instance = this;
+        logger.info("/dev/tools - Initialising...");
 
         // Start the Event Manager Thread.
         eventManagerThread = new Thread(EventManager.get());
@@ -86,6 +83,7 @@ public class DevToolsApplication extends Application {
     }
 
     public void onExit() {
+        logger.info("Received exit request.");
         System.exit(0);
     }
 

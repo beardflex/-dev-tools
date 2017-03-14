@@ -214,4 +214,8 @@ public class DetailViewController implements Initializable {
     public void setBean(Effort bean) {
         this.bean = bean;
     }
+
+    public boolean onExit() {
+        return true;
+    }
 }

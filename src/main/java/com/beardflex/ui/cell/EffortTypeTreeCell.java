@@ -4,17 +4,22 @@ import com.beardflex.bean.*;
 import com.beardflex.event.DevToolsEvent;
 import com.beardflex.event.EventManager;
 import com.beardflex.event.Intent;
+import com.beardflex.ui.Background;
 import com.beardflex.ui.DevToolsApplication;
 import javafx.concurrent.Task;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeCell;
 import javafx.scene.image.ImageView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Created by David on 09/03/2017.
  */
 public class EffortTypeTreeCell extends TreeCell<Effort> {
+
+    private final Logger log = LogManager.getLogger();
 
     public EffortTypeTreeCell() {
 
@@ -27,11 +32,12 @@ public class EffortTypeTreeCell extends TreeCell<Effort> {
             Task<Void> task = new Task<Void>() {
                 @Override protected Void call() throws Exception {
                     DevToolsEvent event = new DevToolsEvent(Intent.Create, getItem());
+                    log.info("Created a 'Create Effort' event. Firing at Event Manager.");
                     EventManager.get().fireEvent(event);
                     return null;
                 }
             };
-            new Thread(task).start();
+            Background.get().fireAndForget(task);
         });
 
         MenuItem viewItem = new MenuItem();
@@ -45,7 +51,7 @@ public class EffortTypeTreeCell extends TreeCell<Effort> {
                     return null;
                 }
             };
-            new Thread(task).start();
+            Background.get().fireAndForget(task);
         });
 
         MenuItem deleteItem = new MenuItem();

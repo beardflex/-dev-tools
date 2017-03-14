@@ -12,6 +12,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
@@ -26,6 +28,8 @@ import java.util.ResourceBundle;
  */
 public class MainViewController implements Initializable {
 
+    private final Logger log = LogManager.getLogger();
+
     @FXML private BorderPane borderPane;
     @FXML private TreeView<Effort> effortTree;
     @FXML private MenuBar menuBar;
@@ -37,6 +41,8 @@ public class MainViewController implements Initializable {
     private ResourceBundle bundle;
 
     private DevToolsEventListener eventListener;
+
+    private DetailViewController currentDetailView;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -50,42 +56,40 @@ public class MainViewController implements Initializable {
         }
 
         eventListener = event -> {
+            log.info("Received /dev/tools event.");
+            // Check if the user wants to cancel.
+            if(currentDetailView != null) {
+                log.info("Calling 'onExit' on the current Detail View.");
+                if(!currentDetailView.onExit()) {
+                    log.info("The user requested a cancellation. Returning.");
+                    return;
+                }
+            }
             URL detailViewFxmlUrl = getClass().getResource("detail/fxml/DetailView.fxml");
             switch(event.getIntent()) {
                 case Create:
-                    Runnable createEffort = () -> {
-                        if(detailViewFxmlUrl != null) {
-                            DetailViewController controller = new DetailViewController(event.getEffort(), event.getIntent());
-                            FXMLLoader loader = new FXMLLoader(detailViewFxmlUrl, bundle);
-                            loader.setController(controller);
-                            try {
-                                VBox detailView = loader.load();
-                                borderPane.setCenter(detailView);
-                            } catch(IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    };
-                    Platform.runLater(createEffort);
+                    log.info("Received a 'Create Effort' under effort '%s' event.", event.getEffort().getName());
                     break;
                 case View:
-                    Runnable viewEffort = () -> {
-                        if(detailViewFxmlUrl != null) {
-                            DetailViewController controller = new DetailViewController(event.getEffort(), event.getIntent());
-                            FXMLLoader loader = new FXMLLoader(detailViewFxmlUrl, bundle);
-                            loader.setController(controller);
-                            try {
-                                VBox detailView = loader.load();
-                                borderPane.setCenter(detailView);
-                            } catch(IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                    };
-                    Platform.runLater(viewEffort);
+                    log.info("Received a 'View Effort' for effort '%s' event.", event.getEffort().getName());
                     break;
             }
+            final DetailViewController controller = new DetailViewController(event.getEffort(), event.getIntent());
+            Runnable createEffort = () -> {
+                if(detailViewFxmlUrl != null) {
+                    log.info("Setting new Detail View.");
+                    FXMLLoader loader = new FXMLLoader(detailViewFxmlUrl, bundle);
+                    loader.setController(controller);
+                    try {
+                        VBox detailView = loader.load();
+                        borderPane.setCenter(detailView);
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            Platform.runLater(createEffort);
+            currentDetailView = controller;
         };
 
         EventManager.get().addListener(eventListener);
