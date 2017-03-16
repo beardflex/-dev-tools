@@ -1,6 +1,7 @@
 package com.beardflex.ui;
 
 import com.beardflex.bean.*;
+import com.beardflex.db.dao.ProjectDAO;
 import com.beardflex.event.DevToolsEventListener;
 import com.beardflex.event.EventManager;
 import com.beardflex.ui.cell.EffortTypeTreeCell;
@@ -101,16 +102,13 @@ public class MainViewController implements Initializable {
 
         effortTree.setCellFactory( cellFactory -> {
             final EffortTypeTreeCell cell = new EffortTypeTreeCell();
-
-            ContextMenu contextMenu = new ContextMenu();
-
             return cell;
         });
         Project rootNode = new Project();
         root = new TreeItem<Effort>(rootNode);
         effortTree.setRoot(root);
 
-        List<Project> projects = getProjects();
+        List<Project> projects = new ProjectDAO().listProject();
 
         for (Project p: projects) {
             addToTree(root, p);
@@ -131,24 +129,6 @@ public class MainViewController implements Initializable {
         parent.getChildren().add(__thisNode);
     }
 
-    public List<Project> getProjects() {
-        Version version = new Version(3,1,0);
-        Project pcd31 = new Project("PANCloudDirector", "Meteor", version);
-
-        Bug bug41686 = new Bug();
-        bug41686.setName("[POV 1719754] PCDTools expects that all servers have a primary and secondary DNS server configured and fails in the case of only the Primary DNS being set");
-        bug41686.setIssueNumber("41686");
-
-        pcd31.getChildren().add(bug41686);
-
-        Feature feature = new Feature();
-        feature.setName("Partner Uplift for Customer Servers");
-        feature.setIssueNumber("41273");
-
-        pcd31.getChildren().add(feature);
-
-        return Arrays.asList(pcd31);
-    }
 
     public void populateList() {
 

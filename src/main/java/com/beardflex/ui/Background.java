@@ -34,6 +34,10 @@ public class Background implements ThreadFactory {
         backgroundService.submit(task);
     }
 
+    public void fireAndForget(Callable<?> call) {
+        backgroundService.submit(call);
+    }
+
     public <T> Future<T> monitor(Callable<T> task) {
         return backgroundService.submit(task);
     }

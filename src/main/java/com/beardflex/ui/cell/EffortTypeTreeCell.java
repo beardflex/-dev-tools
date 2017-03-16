@@ -31,9 +31,11 @@ public class EffortTypeTreeCell extends TreeCell<Effort> {
         addItem.setOnAction(e -> {
             Task<Void> task = new Task<Void>() {
                 @Override protected Void call() throws Exception {
-                    DevToolsEvent event = new DevToolsEvent(Intent.Create, getItem());
-                    log.info("Created a 'Create Effort' event. Firing at Event Manager.");
-                    EventManager.get().fireEvent(event);
+                    if (getItem() != null) {
+                        DevToolsEvent event = new DevToolsEvent(Intent.Create, getItem());
+                        log.info("Created a 'Create Effort' event. Firing at Event Manager.");
+                        EventManager.get().fireEvent(event);
+                    }
                     return null;
                 }
             };
@@ -46,8 +48,11 @@ public class EffortTypeTreeCell extends TreeCell<Effort> {
         viewItem.setOnAction(e -> {
             Task<Void> task = new Task<Void>() {
                 @Override protected Void call() {
-                    DevToolsEvent event = new DevToolsEvent(Intent.View, getItem());
-                    EventManager.get().fireEvent(event);
+                    if(getItem() != null) {
+                        DevToolsEvent event = new DevToolsEvent(Intent.View, getItem());
+                        log.info("Created a 'View Effort' event. Firing at Event Manager.");
+                        EventManager.get().fireEvent(event);
+                    }
                     return null;
                 }
             };

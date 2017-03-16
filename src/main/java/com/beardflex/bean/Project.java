@@ -1,12 +1,17 @@
 package com.beardflex.bean;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
  * Created by David on 07/03/2017.
  */
+@Entity
+@Table(name="project")
 public class Project extends Effort {
+    @Column(name="version")
     private Version version;
+    @Column(name="codeName")
     private String codeName;
 
     public Project() {

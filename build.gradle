@@ -39,6 +39,7 @@ dependencies {
     compile 'org.apache.logging.log4j:log4j-core:2.8.1'
     compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.8.1'
     compile 'org.hibernate:hibernate-core:4.3.6.Final'
+    compile 'org.postgresql:postgresql:9.4-1200-jdbc41'
     
     testCompile 'junit:junit:4.12'
 }

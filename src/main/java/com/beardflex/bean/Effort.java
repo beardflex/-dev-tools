@@ -1,5 +1,8 @@
 package com.beardflex.bean;
 
+import com.beardflex.db.converter.LocalDatePersistenceConverter;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -9,17 +12,34 @@ import java.util.List;
 /**
  * Created by David on 09/03/2017.
  */
+@Entity
+@Inheritance(strategy=InheritanceType.JOINED)
 public class Effort implements Serializable {
     private static final long serialVersionUID = 1l;
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id", unique=true, nullable=false)
+    private long id;
+    @Column(name="name", length=255)
     private String name;
+    @Column(name="type")
+    @Enumerated(EnumType.ORDINAL)
     private EffortType type;
 
+    @Column(name="startDate")
+    @Convert(converter=LocalDatePersistenceConverter.class)
     private LocalDate startDate;
+    @Column(name="dueDate")
+    @Convert(converter=LocalDatePersistenceConverter.class)
     private LocalDate dueDate;
+    @Column(name="completedDate")
+    @Convert(converter=LocalDatePersistenceConverter.class)
     private LocalDate completedDate;
 
+    @ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+    @JoinColumn(name="parent_id", referencedColumnName="id", nullable=true)
     private Effort parent;
+    @OneToMany(fetch=FetchType.LAZY, mappedBy="parent", cascade=CascadeType.ALL)
     private List<Effort> children;
 
     public Effort() {
@@ -41,7 +61,7 @@ public class Effort implements Serializable {
     public void setType(EffortType type) {
         this.type = type;
     }
-
+    @Column()
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -80,5 +100,13 @@ public class Effort implements Serializable {
 
     public void setParent(Effort parent) {
         this.parent = parent;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }
