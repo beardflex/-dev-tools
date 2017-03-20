@@ -28,6 +28,7 @@ public class ProjectDAO {
     public List<Project> listProject() {
         // Create a callable so we can perform the load on a background thread.
         Callable<List<Project>> getProjectsCall = () -> {
+            log.info("Received request to retrieve all projects from DB.");
             List<Project> projects = new ArrayList<Project>();
             Session session = null;
             try {
@@ -68,6 +69,7 @@ public class ProjectDAO {
 
     public Project getProjectById(long id) {
         Callable<Project> getProjectByIdCall = () -> {
+            log.info("Received request to retrieve project with id {} from DB.", id);
             Session session = null;
             Project project = null;
             try {
@@ -107,6 +109,7 @@ public class ProjectDAO {
 
     public Project addProject(Project project) {
         Callable<Project> addProjectCall = () -> {
+            log.info("Received request to add new project to DB.");
             Session session = null;
             Project newProject = null;
             try {
@@ -147,6 +150,7 @@ public class ProjectDAO {
 
     public void updateProject(Project project) {
         Callable<Void> updateProjectCall = () -> {
+            log.info("Received request to update project with id {} in the DB.", project.getId());
             Session session = null;
             try {
                 session = HibernateUtil.get().getSession();

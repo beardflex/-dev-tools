@@ -41,6 +41,9 @@ public class Effort implements Serializable {
     private Effort parent;
     @OneToMany(fetch=FetchType.LAZY, mappedBy="parent", cascade=CascadeType.ALL)
     private List<Effort> children;
+    @OneToOne
+    @JoinColumn(name="id")
+    private HtmlContent description;
 
     public Effort() {
         children = new ArrayList<Effort>();
@@ -108,5 +111,13 @@ public class Effort implements Serializable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public HtmlContent getDescription() {
+        return description;
+    }
+
+    public void setDescription(HtmlContent description) {
+        this.description = description;
     }
 }

@@ -10,6 +10,7 @@
         <property name="hibernate.connection.username">dev_tools</property>
         <property name="hibernate.connection.password">Password!</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hibernate.jdbc.use_streams_for_binary">true</property>
         <!-- Class Mappings -->
         <mapping class="com.beardflex.bean.Effort" />
         <mapping class="com.beardflex.bean.ActionItem" />
@@ -18,5 +19,7 @@
         <mapping class="com.beardflex.bean.TrackedEffort" />
         <mapping class="com.beardflex.bean.Feature" />
         <mapping class="com.beardflex.bean.Bug" />
+        <mapping class="com.beardflex.bean.HtmlContent" />
+        <mapping class="com.beardflex.bean.HtmlImage" />
     </session-factory>
 </hibernate-configuration>

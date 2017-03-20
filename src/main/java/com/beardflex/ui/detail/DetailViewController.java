@@ -4,6 +4,7 @@ import com.beardflex.bean.*;
 import com.beardflex.event.Intent;
 import com.beardflex.ui.Mode;
 import com.beardflex.ui.cell.EffortTypeListCell;
+import com.beardflex.ui.commonmark.MarkdownView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -41,6 +42,8 @@ public class DetailViewController implements Initializable {
     private Effort bean;
     private Intent intent;
 
+    private MarkdownView descriptionField;
+    private ResourceBundle bundle;
 
     public DetailViewController() {
 
@@ -54,6 +57,9 @@ public class DetailViewController implements Initializable {
     @Override
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
+
+        bundle = resources;
+
         if(typeComboBox != null) {
             populateTypes();
         }
@@ -83,6 +89,9 @@ public class DetailViewController implements Initializable {
                                 Project project = new Project();
                                 project.setParent(bean);
                                 bean = project;
+
+
+
                                 break;
                             case Feature:
                                 // If no parent has been selected, it can't be assigned to a Project, so throw an error.
@@ -131,6 +140,8 @@ public class DetailViewController implements Initializable {
                 dueDatePicker.setEditable(false);
                 startDatePicker.setEditable(false);
                 completedDatePicker.setEditable(false);
+
+
                 break;
         }
     }
@@ -152,6 +163,13 @@ public class DetailViewController implements Initializable {
 
     /** */
     private void populateTabPane() {
+
+        descriptionField = new MarkdownView(bundle, bean.getDescription());
+        Tab descriptionTab = new Tab();
+        descriptionTab.setText("Description");
+        descriptionTab.setContent(descriptionField);
+        tabPane.getTabs().add(0, descriptionTab);
+
         switch(bean.getType()) {
             case Project:
 
@@ -177,14 +195,18 @@ public class DetailViewController implements Initializable {
                 }
         );
 
-
-
         if(intent == Intent.View) {
             ObservableList<EffortType> types = FXCollections.observableArrayList(bean.getType());
             typeComboBox.setItems(types);
         } else if(intent == Intent.Create) {
             ObservableList<EffortType> types;
             switch(bean.getType()) {
+                case Root:
+                    types = FXCollections.observableArrayList(
+                            EffortType.Project
+                    );
+                    typeComboBox.setItems(types);
+                    break;
                 case Project:
                     types = FXCollections.observableArrayList(
                             EffortType.Feature,
@@ -203,6 +225,7 @@ public class DetailViewController implements Initializable {
                     types = FXCollections.observableArrayList(
                             EffortType.ActionItem);
                     typeComboBox.setItems(types);
+                    break;
             }
         }
     }

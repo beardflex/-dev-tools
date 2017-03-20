@@ -69,10 +69,10 @@ public class MainViewController implements Initializable {
             URL detailViewFxmlUrl = getClass().getResource("detail/fxml/DetailView.fxml");
             switch(event.getIntent()) {
                 case Create:
-                    log.info("Received a 'Create Effort' under effort '%s' event.", event.getEffort().getName());
+                    log.info("Received a 'Create Effort' under effort '{}' event.", event.getEffort().getName());
                     break;
                 case View:
-                    log.info("Received a 'View Effort' for effort '%s' event.", event.getEffort().getName());
+                    log.info("Received a 'View Effort' for effort '{}' event.", event.getEffort().getName());
                     break;
             }
             final DetailViewController controller = new DetailViewController(event.getEffort(), event.getIntent());
@@ -105,6 +105,7 @@ public class MainViewController implements Initializable {
             return cell;
         });
         Project rootNode = new Project();
+        rootNode.setType(EffortType.Root);
         root = new TreeItem<Effort>(rootNode);
         effortTree.setRoot(root);
 
